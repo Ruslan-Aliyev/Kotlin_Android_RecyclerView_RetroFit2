@@ -10,4 +10,4 @@
 
 ### API
 
-- https://ruslan-website.com/misc/api/v1/movie.php
+- https://ruslan-website.com/misc/api/movie.php
