@@ -2,6 +2,9 @@ package com.example.recyclerview_retrofit2
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
+import android.view.View
+import android.widget.Button
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.gson.GsonBuilder
@@ -11,34 +14,64 @@ import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), View.OnClickListener {
+
+    private var TAG = MainActivity::class.qualifiedName
 
     private var adapter: RecyclerViewAdapter? = null
     private var movies: ArrayList<Movie> = ArrayList<Movie>()
+
+    lateinit var rv: RecyclerView
+
+    lateinit var bGetAll: Button
+    lateinit var bPost: Button
+    lateinit var bPostMultipart: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val rv = findViewById(R.id.list_recycler_view) as RecyclerView
+        rv = findViewById(R.id.list_recycler_view) as RecyclerView
 
-        val retrofit = Retrofit.Builder().addConverterFactory(
-            GsonConverterFactory.create(
-                GsonBuilder().create()))
-            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-            .baseUrl("https://ruslan-website.com/misc/").build()
+        bGetAll = findViewById(R.id.bGetAll)
+        bPost = findViewById(R.id.bPost)
+        bPostMultipart = findViewById(R.id.bPostMultipart)
 
-        val postsApi = retrofit.create(APIService::class.java)
+        bGetAll.setOnClickListener(this);
+        bPost.setOnClickListener(this);
+        bPostMultipart.setOnClickListener(this);
+    }
 
-        var response = postsApi.getAllPosts()
+    override fun onClick(v: View?) {
+        Log.i(TAG, "here")
+        when (v?.getId()) {
+            R.id.bGetAll -> {
+                val retrofit = Retrofit
+                    .Builder()
+                    .addConverterFactory(
+                        GsonConverterFactory
+                            .create(
+                                GsonBuilder().create()
+                            )
+                    )
+                    .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                    .baseUrl("https://ruslan-website.com/")
+                    .build()
 
-        response.observeOn(AndroidSchedulers.mainThread()).subscribeOn(IoScheduler()).subscribe {
-            movies = it
-            adapter = RecyclerViewAdapter(movies)
-            rv.setAdapter(adapter)
-            rv.setLayoutManager(LinearLayoutManager(getApplicationContext()))
+                val moviesApi = retrofit.create(ApiService::class.java)
+
+                var response = moviesApi.getAllPosts()
+
+                response.observeOn(AndroidSchedulers.mainThread())
+                    .subscribeOn(IoScheduler())
+                    .subscribe {
+                        movies = it
+                        adapter = RecyclerViewAdapter(movies)
+                        rv.setAdapter(adapter)
+                        rv.setLayoutManager(LinearLayoutManager(getApplicationContext()))
+                    }
+            }
         }
-
     }
 }
