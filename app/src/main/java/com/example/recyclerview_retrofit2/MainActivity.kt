@@ -2,7 +2,6 @@ package com.example.recyclerview_retrofit2
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.Button
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -15,8 +14,6 @@ import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 
 class MainActivity : AppCompatActivity(), View.OnClickListener {
-
-    private var TAG = MainActivity::class.qualifiedName
 
     private var adapter: RecyclerViewAdapter? = null
     private var movies: ArrayList<Movie> = ArrayList<Movie>()
@@ -44,7 +41,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     override fun onClick(v: View?) {
-        Log.i(TAG, "here")
         when (v?.getId()) {
             R.id.bGetAll -> {
                 val retrofit = Retrofit
