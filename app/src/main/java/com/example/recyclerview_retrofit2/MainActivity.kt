@@ -7,6 +7,7 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
@@ -21,11 +22,12 @@ import okhttp3.MediaType
 import okhttp3.RequestBody
 import okhttp3.ResponseBody
 import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import java.io.IOException
-import java.lang.String
 
 
 class MainActivity : AppCompatActivity(), View.OnClickListener {
@@ -45,6 +47,8 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
     private val REQUEST_CAMERA = 5000
     private val SELECT_FILE = 5001
+
+    private val TAG = MainActivity::class.qualifiedName
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -122,7 +126,16 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
                 val moviesApi = retrofit.create(ApiService::class.java)
 
-                val response: Call<ResponseBody?>? = moviesApi.post(title, year)
+                moviesApi.post(title, year)?.enqueue(
+                    object : Callback<ResponseBody?> {
+                        override fun onFailure(call: Call<ResponseBody?>, t: Throwable) {
+
+                        }
+                        override fun onResponse( call: Call<ResponseBody?>, response: Response<ResponseBody?>) {
+                            Log.i(TAG, response.body().toString())
+                        }
+                    }
+                )
             }
             R.id.bPostMultipart -> {}
             R.id.bChooseImage -> {
