@@ -11,6 +11,7 @@ import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -39,14 +40,9 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
     lateinit var bGetAll: Button
     lateinit var bPost: Button
-    lateinit var bPostMultipart: Button
 
     lateinit var itTitle: EditText
     lateinit var itYear: EditText
-    lateinit var bChooseImage: Button
-
-    private val REQUEST_CAMERA = 5000
-    private val SELECT_FILE = 5001
 
     private val TAG = MainActivity::class.qualifiedName
 
@@ -59,21 +55,18 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
         bGetAll = findViewById(R.id.bGetAll)
         bPost = findViewById(R.id.bPost)
-        bPostMultipart = findViewById(R.id.bPostMultipart)
 
         itTitle = findViewById(R.id.itTitle)
         itYear = findViewById(R.id.itYear)
-        bChooseImage = findViewById(R.id.bChooseImage)
 
         bGetAll.setOnClickListener(this);
         bPost.setOnClickListener(this);
-        bPostMultipart.setOnClickListener(this);
-        bChooseImage.setOnClickListener(this);
     }
 
     override fun onClick(v: View?) {
         when (v?.getId()) {
             R.id.bGetAll -> {
+
                 val retrofit = Retrofit
                     .Builder()
                     .addConverterFactory(
@@ -137,73 +130,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                     }
                 )
             }
-            R.id.bPostMultipart -> {}
-            R.id.bChooseImage -> {
-                val items = arrayOf<CharSequence>("Take Photo", "Choose from Library", "Cancel")
-                val builder: AlertDialog.Builder = AlertDialog.Builder(this@MainActivity)
-                builder.setTitle("Add Photo!")
-                builder.setItems(items,
-                    DialogInterface.OnClickListener { dialog, item ->
-                        if (items[item] == "Take Photo") {
-                            cameraIntent()
-                        } else if (items[item] == "Choose from Library") {
-                            galleryIntent()
-                        } else if (items[item] == "Cancel") {
-                            dialog.dismiss()
-                        }
-                    })
-                builder.show()
-            }
         }
-    }
-
-    private fun cameraIntent() {
-        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        startActivityForResult(intent, REQUEST_CAMERA)
-    }
-
-    private fun galleryIntent() {
-        val intent = Intent()
-        intent.type = "image/*"
-        intent.action = Intent.ACTION_GET_CONTENT
-        startActivityForResult(Intent.createChooser(intent, "Select File"), SELECT_FILE)
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        if (resultCode === Activity.RESULT_OK) {
-            if (requestCode === SELECT_FILE) {
-                onSelectFromGalleryResult(data)
-            } else if (requestCode === REQUEST_CAMERA) {
-                onCaptureImageResult(data)
-            }
-        }
-    }
-
-    private fun onSelectFromGalleryResult(data: Intent?) {
-        var bm: Bitmap? = null
-        if (data != null) {
-            try {
-                val selectedImage: Uri? = data.getData()
-                bm = MediaStore.Images.Media.getBitmap(
-                    applicationContext.contentResolver,
-                    selectedImage
-                )
-                saveImage(bm)
-            } catch (e: IOException) {
-                e.printStackTrace()
-            }
-        }
-    }
-
-    private fun onCaptureImageResult(data: Intent?) {
-        val thumbnail = data!!.extras!!["data"] as Bitmap?
-
-        saveImage(thumbnail)
-    }
-
-    private fun saveImage(thumbnail: Bitmap?) {
-
     }
 }

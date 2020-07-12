@@ -8,21 +8,12 @@ import retrofit2.Call
 import retrofit2.http.*
 
 public interface ApiService {
-
     @GET("misc/api/movie.php")
     fun getAllPosts(): Observable<ArrayList<Movie>>
 
     @Multipart
     @POST("misc/api/movie.php")
     fun post(
-        @Part("title") title: RequestBody?,
-        @Part("year") year: RequestBody?
-    ): Call<ResponseBody?>?
-
-    @Multipart
-    @POST("misc/api/movie.php")
-    fun postMultipart(
-        @Part uploaded_image: MultipartBody.Part?,
         @Part("title") title: RequestBody?,
         @Part("year") year: RequestBody?
     ): Call<ResponseBody?>?

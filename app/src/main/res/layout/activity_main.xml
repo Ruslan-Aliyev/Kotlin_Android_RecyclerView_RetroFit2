@@ -26,12 +26,6 @@
             android:layout_weight="1"
             android:text="Year" />
 
-        <Button
-            android:id="@+id/bChooseImage"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Choose Image" />
-
     </LinearLayout>
 
     <LinearLayout
@@ -50,12 +44,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Post" />
-
-        <Button
-            android:id="@+id/bPostMultipart"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Post Multipart" />
 
     </LinearLayout>
 
